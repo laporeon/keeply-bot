@@ -1,0 +1,30 @@
+target/
+dependency-reduced-pom.xml
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### VS Code ###
+.vscode/
+
+# Logs
+*.log
+logs/
+hs_err_pid*.log
+
+### Mac OS ###
+.DS_Store
+Thumbs.db

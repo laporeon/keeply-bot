@@ -1,6 +1,7 @@
 package com.laporeon.keeplybot.config;
 
 import com.laporeon.keeplybot.commands.SlashCommand;
+import com.laporeon.keeplybot.commands.impl.ClearChatCommand;
 import com.laporeon.keeplybot.commands.impl.HelpCommand;
 import com.laporeon.keeplybot.commands.impl.PingCommand;
 import com.laporeon.keeplybot.listeners.CommandListener;
@@ -18,7 +19,8 @@ public class BotConfiguration {
     private static final Logger log = LoggerFactory.getLogger(BotConfiguration.class);
     private static final List<SlashCommand> COMMANDS = List.of(
             new PingCommand(),
-            new HelpCommand()
+            new HelpCommand(),
+            new ClearChatCommand()
     );
 
     public static void start() throws InterruptedException {

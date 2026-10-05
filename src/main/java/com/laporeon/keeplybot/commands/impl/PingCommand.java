@@ -15,11 +15,13 @@ public class PingCommand implements SlashCommand {
 
     @Override
     public CommandData getCommandData() {
-        return Commands.slash(COMMAND_NAME, "Replies with pong");
+        return Commands.slash(COMMAND_NAME, "Because ping never gets old");
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        event.reply("pong!").setEphemeral(true).queue();
+        if (event.getUser().isBot()) return;
+
+        event.reply("PONG! \uD83C\uDFD3").setEphemeral(true).queue();
     }
 }

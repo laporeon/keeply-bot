@@ -1,8 +1,10 @@
 package com.laporeon.keeplybot.config;
 
 import com.laporeon.keeplybot.commands.SlashCommand;
+import com.laporeon.keeplybot.commands.impl.HelpCommand;
 import com.laporeon.keeplybot.commands.impl.PingCommand;
 import com.laporeon.keeplybot.listeners.CommandListener;
+import com.laporeon.keeplybot.listeners.ReactionListener;
 import com.laporeon.keeplybot.listeners.ReadyEventListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -15,14 +17,19 @@ import java.util.List;
 public class BotConfiguration {
     private static final Logger log = LoggerFactory.getLogger(BotConfiguration.class);
     private static final List<SlashCommand> COMMANDS = List.of(
-            new PingCommand()
+            new PingCommand(),
+            new HelpCommand()
     );
 
     public static void start() throws InterruptedException {
         EnvironmentConfiguration.validate();
 
         JDA jda = JDABuilder.createDefault(EnvironmentConfiguration.token())
-                  .addEventListeners(new ReadyEventListener(), new CommandListener(COMMANDS))
+                  .addEventListeners(
+                          new ReadyEventListener(),
+                          new CommandListener(COMMANDS),
+                          new ReactionListener()
+                          )
                   .build()
                   .awaitReady();
 

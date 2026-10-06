@@ -1,5 +1,6 @@
 package com.laporeon.keeplybot.listeners;
 
+import com.laporeon.keeplybot.helpers.LanguageManager;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -12,13 +13,6 @@ import java.util.concurrent.TimeUnit;
 public class ButtonListener extends ListenerAdapter {
     private static final int FAILURE_MESSAGE_TIMEOUT = 15;
     private static final String DELETE_BUTTON_ID = "delete_saved_message";
-    private static final String DELETE_FAILURE_MESSAGE = """
-            Couldn't delete this saved message.
-
-            Please try again later.
-
-            -# NOTE: This message will be deleted in %d seconds.
-            """;
 
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
@@ -35,7 +29,10 @@ public class ButtonListener extends ListenerAdapter {
     }
 
     private void notifyDeleteFailure(ButtonInteractionEvent event) {
-        String failureMessage = DELETE_FAILURE_MESSAGE.formatted(FAILURE_MESSAGE_TIMEOUT);
+        String failureMessage = LanguageManager.get(
+                event.getUserLocale(),
+                "buttons.delete.failure.message",
+                FAILURE_MESSAGE_TIMEOUT);
 
         InteractionHook hook = event.getHook();
         hook.sendMessage(failureMessage)

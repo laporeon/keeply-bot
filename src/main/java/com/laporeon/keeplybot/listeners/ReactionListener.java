@@ -1,5 +1,6 @@
 package com.laporeon.keeplybot.listeners;
 
+import com.laporeon.keeplybot.helpers.LanguageManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
@@ -7,6 +8,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.DiscordLocale;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +22,6 @@ public class ReactionListener extends ListenerAdapter  {
     private static final String TARGET_EMOJI = "⭐";
     private static final String DELETE_BUTTON_ID = "delete_saved_message";
     private static final int FAILURE_MESSAGE_TIMEOUT = 15;
-    private static final String SEND_FAILURE_MESSAGE = """
-        %s, %s couldn't send you a DM.
-
-        Please enable direct messages from this server and try again.
-
-        -# NOTE: This message will be deleted in %d seconds.
-        """;
 
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
@@ -37,6 +32,7 @@ public class ReactionListener extends ListenerAdapter  {
         if (!reactionEmoji.equals(TARGET_EMOJI)) return;
 
         Guild guild = event.getGuild();
+        DiscordLocale locale = guild.getLocale();
         String channelName = event.getChannel().getName();
 
         event.retrieveMessage()
@@ -44,26 +40,30 @@ public class ReactionListener extends ListenerAdapter  {
                  EmbedBuilder embed = new EmbedBuilder()
                          .setColor(Color.DARK_GRAY)
                          .setAuthor(guild.getName() + " > " + channelName, null, guild.getIconUrl())
-                         .setDescription(message.getContentRaw() + "\u200B");
+                         .setDescription(message.getContentRaw());
 
                  return user.openPrivateChannel()
                             .flatMap(dm -> dm.sendMessageEmbeds(embed.build())
                                              .addComponents(ActionRow.of(
-                                                     Button.danger(DELETE_BUTTON_ID, "\uD83D\uDDD1️ Delete"),
-                                                     Button.link(message.getJumpUrl(), "\uD83D\uDD17 Open original")
+                                                     Button.danger(
+                                                             DELETE_BUTTON_ID,
+                                                             LanguageManager.get(locale, "buttons.delete.cta.label")),
+                                                     Button.link(
+                                                             message.getJumpUrl(),
+                                                             LanguageManager.get(locale, "buttons.link.cta.label"))
                                              ))
                             );
              })
-             .queue(
-                     null,
-                     failure -> handleSendFailure(event, user, failure)
-             );
+             .queue(null, failure -> handleSendFailure(event, user, locale, failure));
     }
 
-    private void handleSendFailure(MessageReactionAddEvent event, User user, Throwable failure) {
+    private void handleSendFailure(MessageReactionAddEvent event, User user,
+                                   DiscordLocale locale, Throwable failure) {
         log.warn("failed to send DM to user={} | error={} | timestamp={}", user.getId(), failure.getMessage(), Instant.now());
 
-        String failureMessage = SEND_FAILURE_MESSAGE.formatted(
+        String failureMessage = LanguageManager.get(
+                locale,
+                "reactions.send.failure.message",
                 user.getAsMention(),
                 event.getJDA().getSelfUser().getName(),
                 FAILURE_MESSAGE_TIMEOUT

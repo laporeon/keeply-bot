@@ -10,6 +10,9 @@ import com.laporeon.keeplybot.listeners.ReactionListener;
 import com.laporeon.keeplybot.listeners.ReadyEventListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.interactions.DiscordLocale;
+import net.dv8tion.jda.api.interactions.commands.localization.LocalizationFunction;
+import net.dv8tion.jda.api.interactions.commands.localization.ResourceBundleLocalizationFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +21,10 @@ import java.util.List;
 
 public class BotConfiguration {
     private static final Logger log = LoggerFactory.getLogger(BotConfiguration.class);
+    private static final String BUNDLE_NAME = "messages";
+    private static final LocalizationFunction LOCALIZATION = ResourceBundleLocalizationFunction
+            .fromBundles(BUNDLE_NAME, DiscordLocale.PORTUGUESE_BRAZILIAN)
+            .build();
     private static final List<SlashCommand> COMMANDS = List.of(
             new PingCommand(),
             new HelpCommand(),
@@ -47,6 +54,7 @@ public class BotConfiguration {
            .addCommands(
                    COMMANDS.stream()
                            .map(SlashCommand::getCommandData)
+                           .map(data -> data.setLocalizationFunction(LOCALIZATION))
                            .toList()
            )
            .queue();

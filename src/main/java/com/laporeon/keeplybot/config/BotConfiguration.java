@@ -4,6 +4,7 @@ import com.laporeon.keeplybot.commands.SlashCommand;
 import com.laporeon.keeplybot.commands.impl.ClearChatCommand;
 import com.laporeon.keeplybot.commands.impl.HelpCommand;
 import com.laporeon.keeplybot.commands.impl.PingCommand;
+import com.laporeon.keeplybot.listeners.ButtonListener;
 import com.laporeon.keeplybot.listeners.CommandListener;
 import com.laporeon.keeplybot.listeners.ReactionListener;
 import com.laporeon.keeplybot.listeners.ReadyEventListener;
@@ -30,7 +31,8 @@ public class BotConfiguration {
                   .addEventListeners(
                           new ReadyEventListener(),
                           new CommandListener(COMMANDS),
-                          new ReactionListener()
+                          new ReactionListener(),
+                          new ButtonListener()
                           )
                   .build()
                   .awaitReady();

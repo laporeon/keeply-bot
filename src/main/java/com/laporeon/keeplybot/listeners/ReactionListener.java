@@ -5,12 +5,8 @@ import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
-import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.InteractionHook;
-import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,13 +27,6 @@ public class ReactionListener extends ListenerAdapter  {
 
         -# NOTE: This message will be deleted in %d seconds.
         """;
-    private static final String DELETE_FAILURE_MESSAGE = """
-            Couldn't delete this saved message.
-
-            Please try again later.
-
-            -# NOTE: This message will be deleted in %d seconds.
-            """;
 
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
@@ -71,20 +60,6 @@ public class ReactionListener extends ListenerAdapter  {
              );
     }
 
-    @Override
-    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
-        if (!event.getComponentId().equals(DELETE_BUTTON_ID)) return;
-
-        event.deferEdit()
-             .flatMap(InteractionHook::deleteOriginal)
-             .queue(
-                     null,
-                     new ErrorHandler()
-                             .ignore(ErrorResponse.UNKNOWN_MESSAGE)
-                             .andThen(failure -> notifyDeleteFailure(event))
-             );
-    }
-
     private void handleSendFailure(MessageReactionAddEvent event, User user, Throwable failure) {
         log.warn("failed to send DM to user={} | error={} | timestamp={}", user.getId(), failure.getMessage(), Instant.now());
 
@@ -100,14 +75,5 @@ public class ReactionListener extends ListenerAdapter  {
              .queue(message -> {
                  message.delete().queueAfter(FAILURE_MESSAGE_TIMEOUT, TimeUnit.SECONDS);
              });
-    }
-
-    private void notifyDeleteFailure(ButtonInteractionEvent event) {
-        String failureMessage = DELETE_FAILURE_MESSAGE.formatted(FAILURE_MESSAGE_TIMEOUT);
-
-        InteractionHook hook = event.getHook();
-        hook.sendMessage(failureMessage)
-            .queue(msg -> hook.deleteMessageById(msg.getId())
-                              .queueAfter(FAILURE_MESSAGE_TIMEOUT, TimeUnit.SECONDS));
     }
 }

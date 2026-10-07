@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
@@ -33,13 +34,13 @@ public class ReactionListener extends ListenerAdapter  {
 
         Guild guild = event.getGuild();
         DiscordLocale locale = guild.getLocale();
-        String channelName = event.getChannel().getName();
+        MessageChannel channel = event.getChannel();
 
         event.retrieveMessage()
              .flatMap(message -> {
                  EmbedBuilder embed = new EmbedBuilder()
                          .setColor(Color.DARK_GRAY)
-                         .setAuthor(guild.getName() + " > " + channelName, null, guild.getIconUrl())
+                         .setAuthor(guild.getName() + "\u2002›\u2002" + channel.getName(), channel.getJumpUrl(), guild.getIconUrl())
                          .setDescription(message.getContentRaw());
 
                  return user.openPrivateChannel()

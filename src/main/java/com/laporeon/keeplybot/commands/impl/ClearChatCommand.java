@@ -32,13 +32,13 @@ public class ClearChatCommand implements SlashCommand {
 
     @Override
     public CommandData getCommandData() {
-        return Commands.slash(COMMAND_NAME, "Remove up to 100 recent messages from your DM.")
+        return Commands.slash(COMMAND_NAME, "Remove up to 100 of the bot's most recent messages from this DM.")
                        .setContexts(InteractionContextType.BOT_DM)
                        .addOptions(
                                new OptionData(
                                        OptionType.INTEGER,
                                        AMOUNT_OPTION,
-                                       "Number of messages to delete (1-%d, default %d)".formatted(MAX_AMOUNT, DEFAULT_AMOUNT)
+                                       "Number of bot messages to delete (1-%d, default %d)".formatted(MAX_AMOUNT, DEFAULT_AMOUNT)
                                )
                                        .setRequiredRange(1, MAX_AMOUNT)
                        );

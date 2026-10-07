@@ -1,0 +1,18 @@
+services:
+  bot:
+    container_name: keeply-bot
+    build: .
+    restart: unless-stopped
+    environment:
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      DISCORD_GUILD_ID: ${DISCORD_GUILD_ID}
+      ACTIVE_PROFILE: ${ACTIVE_PROFILE:-dev}
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

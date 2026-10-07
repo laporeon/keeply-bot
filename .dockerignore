@@ -1,0 +1,16 @@
+target/
+.env
+.env.*
+!.env.example
+.git/
+.gitignore
+*.md
+.mvn/
+mvnw
+mvnw.cmd
+.idea/
+*.iml
+.vscode/
+Dockerfile
+docker-compose.yaml
+.dockerignore

@@ -21,16 +21,12 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Locale;
 
 public class BotConfiguration {
     private static final Logger log = LoggerFactory.getLogger(BotConfiguration.class);
     private static final String GUILD_NOT_FOUND_MESSAGE = "Development guild '%s' was not found. " +
             "Check DISCORD_GUILD_ID configuration and try again.";
-    private static final String BUNDLE_NAME = "messages";
-    private static final LocalizationFunction LOCALIZATION = ResourceBundleLocalizationFunction
-            .fromBundles(BUNDLE_NAME, DiscordLocale.PORTUGUESE_BRAZILIAN)
-            .build();
+
     private static final List<SlashCommand> COMMANDS = List.of(
             new PingCommand(),
             new HelpCommand(),
@@ -60,27 +56,29 @@ public class BotConfiguration {
     }
 
     private static void registerCommands(JDA jda) {
+       LocalizationFunction localizationFunction = ResourceBundleLocalizationFunction
+               .fromBundles("messages", DiscordLocale.PORTUGUESE_BRAZILIAN)
+               .build();
+
         List<CommandData> data = COMMANDS.stream()
                                              .map(SlashCommand::getCommandData)
-                                             .map(d -> d.setLocalizationFunction(LOCALIZATION))
+                                             .map(d -> d.setLocalizationFunction(localizationFunction))
                                              .toList();
-
-        String profile = EnvironmentConfiguration.profile().toUpperCase(Locale.ROOT);
-
+        
         if (EnvironmentConfiguration.isDev()) {
-            registerDevelopmentCommands(jda, data, profile);
+            registerDevelopmentCommands(jda, data);
             return;
         }
 
         jda.updateCommands().addCommands(data).queue(
                 registered -> log.info(
-                        "{} global commands registered | active_profile={} | timestamp={}",
-                        registered.size(), profile, Instant.now()),
+                        "{} global commands registered | timestamp={}",
+                        registered.size(), Instant.now()),
                 error -> log.error("failed to register global commands", error)
         );
     }
 
-    private static void registerDevelopmentCommands(JDA jda, List<CommandData> data, String profile) {
+    private static void registerDevelopmentCommands(JDA jda, List<CommandData> data) {
         String guildId = EnvironmentConfiguration.guildId().get();
         Guild guild = jda.getGuildById(guildId);
 
@@ -92,7 +90,7 @@ public class BotConfiguration {
                 cmds -> log.info(
                         "{} commands registered in development mode | guild_id={} | guild_name={} | timestamp={}",
                         cmds.size(), guild.getId(), guild.getName(), Instant.now()),
-                error -> log.error("Failed to register development commands in guildId {}", guildId, error)
+                error -> log.error("failed to register development commands in guildId={}", guildId, error)
         );
     }
 }

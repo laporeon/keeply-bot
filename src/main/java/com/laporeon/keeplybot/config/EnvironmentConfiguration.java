@@ -1,6 +1,6 @@
 package com.laporeon.keeplybot.config;
 
-import com.laporeon.keeplybot.exceptions.DiscordException;
+import com.laporeon.keeplybot.exceptions.ConfigurationException;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import java.util.Optional;
@@ -29,17 +29,18 @@ public class EnvironmentConfiguration {
         profile();
 
         if (isDev() && guildId().isEmpty()) {
-            throw new DiscordException("'DISCORD_GUILD_ID' must be set in development mode.");
+            throw new ConfigurationException("'DISCORD_GUILD_ID' must be set in development mode.");
         }
     }
 
     private static String require(String key) {
         return get(key)
                 .filter(value -> !value.isBlank())
-                .orElseThrow(() -> new IllegalStateException(
+                .orElseThrow(() -> new ConfigurationException(
                         "Required environment variable '%s' is missing or blank.".formatted(key)
                 ));
     }
+
     private static Optional<String> get(String key) {
         return Optional.ofNullable(System.getenv(key))
                        .filter(value -> !value.isBlank())

@@ -33,8 +33,7 @@ messages can be opened in their original context or deleted directly from the DM
 - Delete saved messages from your DM with a button.
 - Clear up to 100 recent messages sent by the bot with `/clear`.
 - Support for English and Brazilian Portuguese localization.
-- Development mode with instant guild command registration.
-- Production mode with global command registration.
+- Custom branding: icon and banner available in [`resources/assets/`](./src/main/resources/assets)
 
 ## Requirements
 

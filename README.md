@@ -13,8 +13,7 @@
 - [About](#about)
 - [Requirements](#requirements)
 - [Getting Started](#getting-started)
-    - [Running with Docker (Recommended)](#running-with-docker-recommended)
-    - [Running Locally](#running-locally)
+    - [Quick Start](#quick-start)
     - [Environment Variables Reference](#environment-variables-reference)
 - [Usage](#usage)
     - [Commands](#commands)
@@ -32,74 +31,59 @@ messages can be opened in their original context or deleted directly from the DM
 - Open the original message with a direct link.
 - Delete saved messages from your DM with a button.
 - Clear up to 100 recent messages sent by the bot with `/clear`.
-- Support for English and Brazilian Portuguese localization.
-- Custom branding: icon and banner available in [`resources/assets/`](./src/main/resources/assets)
+- Support for English and Brazilian Portuguese localization. 
+- Custom branding: icon and banner available in [`src/main/resources/assets/`](./src/main/resources/assets/).
 
 ## Requirements
 
 **For Docker (Recommended):**
 
-- Docker & Docker Compose 
-- Make
+- Docker
+- Docker Compose 
+- Make _(optional)_
 
 **For Local Development:**
 
 - Java 21+
-- Make
-- Maven 3.9+ (optional; the Maven Wrapper is included)
+- Make _(optional)_
+
+> [!NOTE]
+> - The project ships with Maven Wrapper (`./mvnw` and `mvnw.cmd`), so a global Maven installation is not required.
 
 ## Getting Started
 
-### Running with Docker (Recommended)
+The development workflow is powered by Makefile. Run `make help` to list all available commands.
 
-1. Copy the example environment file and fill in your Discord credentials:
+> [!NOTE]
+> `make` is available out of the box on Linux and macOS. On Windows, use [WSL](https://learn.microsoft.com/windows/wsl/),
+> or run the equivalent commands from the table below (use `mvnw.cmd` instead of `./mvnw`).
+
+| Command | Description | Equivalent without Make |
+|---|---|---|
+| `make env` | Create `.env` from `.env.example` if it does not exist | `cp .env.example .env` |
+| `make build` | Package the application  | `./mvnw clean package` |
+| `make compile` | Compile the project | `./mvnw compile` |
+| `make verify` | Run Maven verification | `./mvnw verify` |
+| `make clean` | Clean Maven build artifacts | `./mvnw clean` |
+| `make run` | Build and run the bot locally | `./mvnw clean package && java -jar target/keeplybot.jar` |
+| `make dev` | Create `.env` if missing, then build and start the containers in the background | `docker compose up --build -d` |
+| `make down` | Stop and remove the containers | `docker compose down` |
+| `make logs` | Follow the container logs | `docker compose logs -f` |
+
+### Quick Start
+
+**Docker**
 
 ```bash
-cp .env.example .env
-# Edit .env with your local values
+make env # Create the local environment file if it does not exist.
+make dev # Build and start the application and MongoDB containers.
 ```
 
-2. Build and start the bot:
+**Local Development**
 
 ```bash
-make dev
-```
-
-3. Follow the logs when needed:
-
-```bash
-make dev-logs
-```
-
-To stop the bot:
-
-```bash
-make dev-down
-```
-
-### Running Locally
-
-1. Set the required environment variables using either method below:
-
-    - **Option 1: Using a `.env` file**
-
-      ```bash
-      cp .env.example .env
-      # Edit .env with your local values
-      ```
-
-    - **Option 2: Exporting variables through the shell**
-
-      ```bash
-      export DISCORD_TOKEN=<your-bot-token>
-      export DISCORD_GUILD_ID=<your-development-guild-id>
-      export ACTIVE_PROFILE=dev
-      ```
-
-2. Build and run the bot:
-
-```bash
-make run
+make env # Create the local environment file if it does not exist.
+make run # Build and start the application.
 ```
 
 ### Environment Variables Reference
@@ -107,14 +91,15 @@ make run
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `DISCORD_TOKEN` | Yes | — | Token used to authenticate the Discord bot. |
-| `ACTIVE_PROFILE` | Yes | — | Registration profile: `dev` registers commands in one guild; any other value registers them globally. |
-| `DISCORD_GUILD_ID` | Only in `dev` | — | ID of the guild where development slash commands are registered. |
+| `ACTIVE_PROFILE` | Yes | — | Controls slash command registration. When set to `dev`, commands are registered in one guild; any other value registers them globally. |
+| `DISCORD_GUILD_ID` | Only when `ACTIVE_PROFILE=dev` | — | ID of the guild where development slash commands are registered. |
 
-The application reads variables from the process environment first and then from `.env`. In development mode,
-`DISCORD_GUILD_ID` must identify a guild that the bot can access.
+The application reads variables from the process environment first and then from `.env`.
 
-The bot must also be invited to Discord with the permissions and intents required to read message reactions, send direct
-messages, and manage its own messages.
+When `ACTIVE_PROFILE=dev`, `DISCORD_GUILD_ID` must identify a guild that the bot can access.
+
+The bot must also be invited to Discord with the permissions and intents required to read message reactions,
+send direct messages, and manage its own messages.
 
 ## Usage
 
@@ -137,8 +122,10 @@ they are registered globally and may take time to become available across Discor
 | `Open` button | Opens the original message in Discord. |
 | `Delete` button | Deletes the saved message from the DM. |
 
-The bot ignores reactions added by other bots. If direct messages are disabled or unavailable, the bot reports the
-failure in the original channel and removes that notification after a short timeout.
+The bot ignores reactions added by other bots.
+
+If direct messages are disabled or unavailable, the bot reports the failure in the original channel
+and removes that notification after a short timeout.
 
 ## License
 

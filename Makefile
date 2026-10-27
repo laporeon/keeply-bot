@@ -1,26 +1,16 @@
-ifeq ($(OS),Windows_NT)
-  MVN ?= mvnw.cmd
-else
-  MVN ?= ./mvnw
-endif
+.DEFAULT_GOAL := help
 
 JAR     := target/keeplybot.jar
+MVN ?= ./mvnw
 COMPOSE := docker-compose.yaml
 
-.DEFAULT_GOAL := help
-.PHONY: help build compile test verify clean run dev dev-down dev-logs
+.PHONY: help env build compile test verify clean run dev down logs
 
-help:
-	$(info Available targets:)
-	$(info - build:    Clean and build the executable JAR)
-	$(info - compile:  Compile the project)
-	$(info - verify:   Run Maven verification)
-	$(info - clean:    Clean Maven build artifacts)
-	$(info - run:      Build and run the bot locally)
-	$(info - dev:      Build and run the bot with Docker)
-	$(info - dev-down: Stop the Docker environment)
-	$(info - dev-logs: Follow the bot logs)
-	@:
+help: ## Show available commands
+	@awk 'BEGIN {FS = ":.*## "} /^[a-zA-Z_-]+:.*## / {printf "  \033[36m%-10s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+env: ## Create .env from .env.example if missing
+	@test -f .env || cp .env.example .env
 
 build: ## Clean and build the executable JAR
 	$(MVN) clean package
@@ -37,11 +27,11 @@ clean: ## Clean Maven build artifacts
 run: build ## Build and run the bot locally
 	java -jar $(JAR)
 
-dev: ## Build and run the bot with Docker
+dev: env ## Build and start containers in the background
 	docker compose -f $(COMPOSE) up -d --build
 
-dev-down: ## Stop the Docker environment
+down: ## Stop the Docker environment
 	docker compose -f $(COMPOSE) down
 
-dev-logs: ## Follow the bot logs
+logs: ## Follow the bot logs
 	docker compose -f $(COMPOSE) logs -f

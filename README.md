@@ -1,10 +1,10 @@
-<h1 align="center">Keeply Bot
+<h1 align="center"> Keeply Bot
 
-![java](https://img.shields.io/static/v1?label=java&message=21&color=2d3748&logo=openjdk&style=flat-square)
-![jda](https://img.shields.io/static/v1?label=jda&message=6.7.0&color=2d3748&logo=discord&style=flat-square)
-![maven](https://img.shields.io/static/v1?label=maven&message=3.9%2B&color=2d3748&logo=apachemaven&style=flat-square)
-![docker](https://img.shields.io/static/v1?label=docker&message=29.9.0&color=2d3748&logo=docker&style=flat-square)
-![license](https://img.shields.io/badge/license-GPL--3.0-2d3748?style=flat-square)
+![java](https://img.shields.io/static/v1?label=java&message=21&labelColor=2d3748&color=grey&logo=openjdk&logoColor=white&style=flat)
+![jda](https://img.shields.io/static/v1?label=jda&message=6.7.0&labelColor=2d3748&color=grey&logo=discord&logoColor=white&style=flat)
+![maven](https://img.shields.io/static/v1?label=maven&message=3.9%2B&labelColor=2d3748&color=grey&logo=apachemaven&logoColor=white&style=flat)
+![docker](https://img.shields.io/static/v1?label=docker&message=29.9.0&labelColor=2d3748&color=grey&logo=docker&logoColor=white&style=flat)
+[![GPL-3.0 License](https://img.shields.io/badge/license-GPL--3.0-green?style=flat-square)](./LICENSE)
 
 </h1>
 
@@ -13,97 +13,89 @@
 - [About](#about)
 - [Requirements](#requirements)
 - [Getting Started](#getting-started)
-    - [Quick Start](#quick-start)
-    - [Environment Variables Reference](#environment-variables-reference)
+  - [1. Configure your environment](#1-configure-your-environment)
+  - [2. Build and run](#2-build-and-run)
 - [Usage](#usage)
-    - [Commands](#commands)
-    - [Message Actions](#message-actions)
-- [License](#license)
 
 ## About
 
-Keeply is a Discord bot that lets you bookmark messages. React to a message with ⭐ and
-Keeply sends a copy to your direct messages, including the original message link and available image attachment. Saved
-messages can be opened in their original context or deleted directly from the DM.
-
-**Key features:**
-
-- Open the original message with a direct link.
-- Delete saved messages from your DM with a button.
-- Clear up to 100 recent messages sent by the bot with `/clear`.
-- Support for English and Brazilian Portuguese localization. 
-- Custom branding: icon and banner available in [`src/main/resources/assets/`](./src/main/resources/assets/).
+Keeply is a Discord bot that lets you bookmark messages. React to a message with ⭐ and Keeply sends a copy to your
+direct messages, including the original message link and available image attachment. Saved messages can be opened in
+their original context or deleted directly from the DM.
 
 ## Requirements
 
-**For Docker (Recommended):**
-
-- Docker
-- Docker Compose 
-- Make _(optional)_
-
-**For Local Development:**
-
-- Java 21+
+- Java 21+ (or Docker with Docker Compose)
+- A Discord bot token
 - Make _(optional)_
 
 > [!NOTE]
-> - The project ships with Maven Wrapper (`./mvnw` and `mvnw.cmd`), so a global Maven installation is not required.
+> - The project ships with the Maven Wrapper, so a global Maven installation is not required.
 
 ## Getting Started
 
-The development workflow is powered by Makefile. Run `make help` to list all available commands.
+The project provides a `Makefile` with commands for building, running, and managing the application.
+Run `make help` to list all available targets.
+
+| Command | Description |
+|---|---|
+| `make help` | Show all available commands |
+| `make env` | Create `.env` from `.env.example` if it does not exist |
+| `make build` | Package the application |
+| `make compile` | Compile the project |
+| `make verify` | Run Maven verification |
+| `make clean` | Clean Maven build artifacts |
+| `make run` | Build and run the bot locally |
+| `make dev` | Create `.env` if missing, then build and start the containers in the background |
+| `make down` | Stop and remove the containers |
+| `make logs` | Follow the container logs |
 
 > [!NOTE]
-> `make` is available out of the box on Linux and macOS. On Windows, use [WSL](https://learn.microsoft.com/windows/wsl/),
-> or run the equivalent commands from the table below (use `mvnw.cmd` instead of `./mvnw`).
+> `make` is available out of the box on Linux and macOS. On Windows, use [WSL](https://learn.microsoft.com/windows/wsl/)
+> or the Maven Wrapper commands shown in the sections below.
 
-| Command | Description | Equivalent without Make |
-|---|---|---|
-| `make env` | Create `.env` from `.env.example` if it does not exist | `cp .env.example .env` |
-| `make build` | Package the application  | `./mvnw clean package` |
-| `make compile` | Compile the project | `./mvnw compile` |
-| `make verify` | Run Maven verification | `./mvnw verify` |
-| `make clean` | Clean Maven build artifacts | `./mvnw clean` |
-| `make run` | Build and run the bot locally | `./mvnw clean package && java -jar target/keeplybot.jar` |
-| `make dev` | Create `.env` if missing, then build and start the containers in the background | `docker compose up --build -d` |
-| `make down` | Stop and remove the containers | `docker compose down` |
-| `make logs` | Follow the container logs | `docker compose logs -f` |
+### 1. Configure your environment
 
-### Quick Start
+Create a local `.env` file from the provided example (or copy `.env.example` to `.env` manually) and fill in the values:
+
+```bash
+make env
+```
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DISCORD_TOKEN` | Yes | Token used to authenticate the Discord bot. |
+| `ACTIVE_PROFILE` | Yes | When set to `dev`, commands are registered in one guild; any other value registers them globally. |
+| `DISCORD_GUILD_ID` | Only when `ACTIVE_PROFILE=dev` | ID of the guild where development slash commands are registered. |
+
+The application checks the system environment first and uses `.env` as a fallback.
+
+### 2. Build and run
 
 **Docker**
 
 ```bash
-make env # Create the local environment file if it does not exist.
-make dev # Build and start the application and MongoDB containers.
+make dev # Build and start the containers.
 ```
 
 **Local Development**
 
 ```bash
-make env # Create the local environment file if it does not exist.
-make run # Build and start the application.
+# Using Make (Linux / macOS only)
+make run
+
+# Direct JAR execution
+
+# Linux / macOS
+./mvnw clean package
+java -jar target/keeplybot.jar
+
+# Windows
+mvnw.cmd clean package
+java -jar target\keeplybot.jar
 ```
 
-### Environment Variables Reference
-
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `DISCORD_TOKEN` | Yes | — | Token used to authenticate the Discord bot. |
-| `ACTIVE_PROFILE` | Yes | — | Controls slash command registration. When set to `dev`, commands are registered in one guild; any other value registers them globally. |
-| `DISCORD_GUILD_ID` | Only when `ACTIVE_PROFILE=dev` | — | ID of the guild where development slash commands are registered. |
-
-The application reads variables from the process environment first and then from `.env`.
-
-When `ACTIVE_PROFILE=dev`, `DISCORD_GUILD_ID` must identify a guild that the bot can access.
-
-The bot must also be invited to Discord with the permissions and intents required to read message reactions,
-send direct messages, and manage its own messages.
-
 ## Usage
-
-### Commands
 
 | Command | Context | Description |
 |---------|---------|-------------|
@@ -111,24 +103,7 @@ send direct messages, and manage its own messages.
 | `/ping` | Guild or DM | Replies with `PONG!`. |
 | `/clear [amount]` | Bot DM | Deletes up to 100 recent messages sent by Keeply. `amount` defaults to `100`. |
 
-Commands are registered in the guild configured by `DISCORD_GUILD_ID` when `ACTIVE_PROFILE=dev`. In other profiles,
-they are registered globally and may take time to become available across Discord.
+React to any message with ⭐ to receive it in your DMs. Use the `Open` button to jump to the original message or the
+`Delete` button to remove the saved message from the DM.
 
-### Message Actions
-
-| Action | Description |
-|--------|-------------|
-| ⭐ reaction | Sends the reacted message to the user's DMs. |
-| `Open` button | Opens the original message in Discord. |
-| `Delete` button | Deletes the saved message from the DM. |
-
-The bot ignores reactions added by other bots.
-
-If direct messages are disabled or unavailable, the bot reports the failure in the original channel
-and removes that notification after a short timeout.
-
-## License
-
-This project is licensed under the GPL-3.0 License. See the [LICENSE](LICENSE) file for details.
-
-[⬆ Back to the top](#keeply-bot)
+[⬆ Back to the top](#-keeply-bot)

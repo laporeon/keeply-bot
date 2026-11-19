@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.laporeon</groupId>
-	<artifactId>keeplybot</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+  <groupId>com.laporeon</groupId>
+  <artifactId>keeplybot</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
-	<name>Keeply Bot</name>
-	<description>Like a bookmark for your Discord chats. Save messages, revisit them later.</description>
-	<licenses>
-		<license>
-			<name>GNU General Public License v3.0</name>
-			<url>https://opensource.org/license/gpl-3.0</url>
-		</license>
-	</licenses>
+  <name>Keeply Bot</name>
+  <description>Like a bookmark for your Discord chats. Save messages, revisit them later.</description>
+  <licenses>
+    <license>
+      <name>GNU General Public License v3.0</name>
+      <url>https://opensource.org/license/gpl-3.0</url>
+    </license>
+  </licenses>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.release>21</maven.compiler.release>
-		<main.class>com.laporeon.keeplybot.KeeplyApplication</main.class>
-		<maven.shade.plugin.version>3.6.0</maven.shade.plugin.version>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.release>21</maven.compiler.release>
+    <main.class>com.laporeon.keeplybot.KeeplyApplication</main.class>
+    <maven.shade.plugin.version>3.6.0</maven.shade.plugin.version>
     <dotenv.version>3.2.0</dotenv.version>
     <jda.discord.version>6.7.0</jda.discord.version>
-    <logback.classic.version>1.6.3</logback.classic.version>
+    <logback.classic.version>1.6.7</logback.classic.version>
     <exec.maven.plugin.version>3.6.4</exec.maven.plugin.version>
-	</properties>
+  </properties>
 
-	<dependencies>
+  <dependencies>
     <dependency>
       <groupId>io.github.cdimascio</groupId>
       <artifactId>dotenv-java</artifactId>
@@ -43,11 +43,11 @@
       <artifactId>logback-classic</artifactId>
       <version>${logback.classic.version}</version>
     </dependency>
-	</dependencies>
+  </dependencies>
 
-	<build>
+  <build>
     <finalName>keeplybot</finalName>
-		<plugins>
+    <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -94,7 +94,7 @@
           <mainClass>${main.class}</mainClass>
         </configuration>
       </plugin>
-		</plugins>
-	</build>
+    </plugins>
+  </build>
 
 </project>
